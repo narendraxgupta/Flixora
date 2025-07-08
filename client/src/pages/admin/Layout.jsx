@@ -6,24 +6,30 @@ import { useAppContext } from '../../context/AppContext'
 import Loading from '../../components/Loading'
 
 const Layout = () => {
+  const { isAdmin, fetchIsAdmin } = useAppContext()
 
-  const {isAdmin, fetchIsAdmin} = useAppContext()
+  useEffect(() => {
+    if (isAdmin === undefined || isAdmin === null) {
+      fetchIsAdmin()
+    }
+    // Only run when isAdmin changes
+  }, [isAdmin, fetchIsAdmin])
 
-  useEffect(()=>{
-    fetchIsAdmin()
-  },[])
+  if (isAdmin === undefined || isAdmin === null) {
+    return <Loading />
+  }
 
-  return isAdmin ? (
+  return (
     <>
       <AdminNavbar />
       <div className='flex'>
-        <AdminSidebar/>
+        <AdminSidebar />
         <div className='flex-1 px-4 py-10 md:px-10 h-[calc(100vh-64px)] overflow-y-auto'>
-            <Outlet />
+          <Outlet />
         </div>
       </div>
     </>
-  ) : <Loading/>
+  )
 }
 
 export default Layout
